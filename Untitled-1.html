@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LaptopCompare - Compare Laptop Specifications</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: #3498db;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #3498db;
+        }
+
+        .search-bar {
+            margin: 1.5rem 0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .search-bar button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .search-bar button:hover {
+            background-color: #2980b9;
+        }
+
+        .comparison-section {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #2c3e50;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 0.5rem;
+        }
+
+        .laptop-selectors {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 1.5rem;
+        }
+
+        .laptop-selector {
+            flex: 1;
+            position: relative;
+        }
+
+        .laptop-selector select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            background-color: white;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .laptop-selector::after {
+            content: "▼";
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: #777;
+        }
+
+        .add-laptop-btn {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.2rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        .add-laptop-btn:hover {
+            background-color: #219653;
+        }
+
+        .laptops-display {
+            display: flex;
+            overflow-x: auto;
+            gap: 15px;
+            margin-bottom: 1.5rem;
+        }
+
+        .laptop-card {
+            min-width: 200px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .laptop-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .laptop-image {
+            height: 150px;
+            background-color: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .laptop-image img {
+            max-width: 90%;
+            max-height: 90%;
+            object-fit: contain;
+        }
+
+        .laptop-info {
+            padding: 1rem;
+        }
+
+        .laptop-name {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .laptop-price {
+            color: #e74c3c;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .remove-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+
+        .remove-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .specs-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .specs-table th {
+            background-color: #f8f9fa;
+            text-align: left;
+            padding: 0.8rem;
+            border-bottom: 1px solid #e0e0e0;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .specs-table td {
+            padding: 0.8rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .specs-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .highlight-diff {
+            background-color: #fff9e6;
+        }
+
+        .highlight-better {
+            background-color: #e8f5e9;
+        }
+
+        .highlight-worse {
+            background-color: #ffebee;
+        }
+
+        .highlight-btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        .highlight-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .highlight-btn.active {
+            background-color: #2c3e50;
+        }
+
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 1.5rem 0;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav ul {
+                margin-top: 1rem;
+            }
+
+            .laptop-selectors {
+                flex-direction: column;
+            }
+
+            .laptops-display {
+                flex-direction: column;
+            }
+
+            .laptop-card {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">Laptop<span>Compare</span></div>
+                <nav>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Laptops</a></li>
+                        <li><a href="#">Brands</a></li>
+                        <li><a href="#">News</a></li>
+                        <li><a href="#">Reviews</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="search-bar">
+            <input type="text" placeholder="Search for laptops...">
+            <button>Search</button>
+        </div>
+
+        <section class="comparison-section">
+            <h2 class="section-title">Compare Laptops</h2>
+            
+            <div class="laptop-selectors">
+                <div class="laptop-selector">
+                    <select id="laptop1">
+                        <option value="">Select Laptop 1</option>
+                        <option value="dell-xps-13">Dell XPS 13</option>
+                        <option value="macbook-pro-14">MacBook Pro 14"</option>
+                        <option value="lenovo-thinkpad">Lenovo ThinkPad X1</option>
+                        <option value="hp-spectre">HP Spectre x360</option>
+                        <option value="asus-zenbook">ASUS ZenBook 14</option>
+                    </select>
+                </div>
+                <div class="laptop-selector">
+                    <select id="laptop2">
+                        <option value="">Select Laptop 2</option>
+                        <option value="dell-xps-13">Dell XPS 13</option>
+                        <option value="macbook-pro-14">MacBook Pro 14"</option>
+                        <option value="lenovo-thinkpad">Lenovo ThinkPad X1</option>
+                        <option value="hp-spectre">HP Spectre x360</option>
+                        <option value="asus-zenbook">ASUS ZenBook 14</option>
+                    </select>
+                </div>
+                <button class="add-laptop-btn">+ Add Another</button>
+            </div>
+
+            <div class="laptops-display">
+                <!-- Laptop cards will be dynamically added here -->
+            </div>
+
+            <button class="highlight-btn" id="highlightDifferences">Highlight Differences</button>
+
+            <table class="specs-table">
+                <thead>
+                    <tr>
+                        <th>Specifications</th>
+                        <th>Laptop 1</th>
+                        <th>Laptop 2</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Display</td>
+                        <td>13.4" FHD+ (1920 x 1200)</td>
+                        <td>14.2" Liquid Retina XDR (3024 x 1964)</td>
+                    </tr>
+                    <tr>
+                        <td>Processor</td>
+                        <td>Intel Core i7-1250U</td>
+                        <td>Apple M1 Pro (8-core)</td>
+                    </tr>
+                    <tr>
+                        <td>RAM</td>
+                        <td>16GB LPDDR5</td>
+                        <td>16GB Unified Memory</td>
+                    </tr>
+                    <tr>
+                        <td>Storage</td>
+                        <td>512GB SSD</td>
+                        <td>512GB SSD</td>
+                    </tr>
+                    <tr>
+                        <td>Graphics</td>
+                        <td>Intel Iris Xe</td>
+                        <td>Apple 14-core GPU</td>
+                    </tr>
+                    <tr>
+                        <td>Battery</td>
+                        <td>55Wh, up to 14 hours</td>
+                        <td>70Wh, up to 17 hours</td>
+                    </tr>
+                    <tr>
+                        <td>Weight</td>
+                        <td>1.27 kg (2.8 lbs)</td>
+                        <td>1.6 kg (3.5 lbs)</td>
+                    </tr>
+                    <tr>
+                        <td>Price</td>
+                        <td>$1,299</td>
+                        <td>$1,999</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 LaptopCompare. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Laptop data
+            const laptops = {
+                'dell-xps-13': {
+                    name: 'Dell XPS 13',
+                    image: 'https://via.placeholder.com/200x150?text=Dell+XPS+13',
+                    price: '$1,299',
+                    specs: {
+                        display: '13.4" FHD+ (1920 x 1200)',
+                        processor: 'Intel Core i7-1250U',
+                        ram: '16GB LPDDR5',
+                        storage: '512GB SSD',
+                        graphics: 'Intel Iris Xe',
+                        battery: '55Wh, up to 14 hours',
+                        weight: '1.27 kg (2.8 lbs)',
+                        price: '$1,299'
+                    }
+                },
+                'macbook-pro-14': {
+                    name: 'MacBook Pro 14"',
+                    image: 'https://via.placeholder.com/200x150?text=MacBook+Pro+14',
+                    price: '$1,999',
+                    specs: {
+                        display: '14.2" Liquid Retina XDR (3024 x 1964)',
+                        processor: 'Apple M1 Pro (8-core)',
+                        ram: '16GB Unified Memory',
+                        storage: '512GB SSD',
+                        graphics: 'Apple 14-core GPU',
+                        battery: '70Wh, up to 17 hours',
+                        weight: '1.6 kg (3.5 lbs)',
+                        price: '$1,999'
+                    }
+                },
+                'lenovo-thinkpad': {
+                    name: 'Lenovo ThinkPad X1',
+                    image: 'https://via.placeholder.com/200x150?text=ThinkPad+X1',
+                    price: '$1,599',
+                    specs: {
+                        display: '14" WQUXGA (3840 x 2400)',
+                        processor: 'Intel Core i7-1260P',
+                        ram: '16GB LPDDR5',
+                        storage: '1TB SSD',
+                        graphics: 'Intel Iris Xe',
+                        battery: '57Wh, up to 10 hours',
+                        weight: '1.12 kg (2.48 lbs)',
+                        price: '$1,599'
+                    }
+                },
+                'hp-spectre': {
+                    name: 'HP Spectre x360',
+                    image: 'https://via.placeholder.com/200x150?text=HP+Spectre+x360',
+                    price: '$1,449',
+                    specs: {
+                        display: '13.5" OLED (3000 x 2000)',
+                        processor: 'Intel Core i7-1255U',
+                        ram: '16GB LPDDR4x',
+                        storage: '1TB SSD',
+                        graphics: 'Intel Iris Xe',
+                        battery: '66Wh, up to 17 hours',
+                        weight: '1.36 kg (3.0 lbs)',
+                        price: '$1,449'
+                    }
+                },
+                'asus-zenbook': {
+                    name: 'ASUS ZenBook 14',
+                    image: 'https://via.placeholder.com/200x150?text=ASUS+ZenBook+14',
+                    price: '$999',
+                    specs: {
+                        display: '14" OLED (2880 x 1800)',
+                        processor: 'AMD Ryzen 7 5800H',
+                        ram: '16GB DDR4',
+                        storage: '512GB SSD',
+                        graphics: 'AMD Radeon Graphics',
+                        battery: '63Wh, up to 15 hours',
+                        weight: '1.39 kg (3.06 lbs)',
+                        price: '$999'
+                    }
+                }
+            };
+
+            const laptopSelectors = document.querySelectorAll('.laptop-selector select');
+            const laptopsDisplay = document.querySelector('.laptops-display');
+            const specsTable = document.querySelector('.specs-table');
+            const highlightBtn = document.getElementById('highlightDifferences');
+            let isHighlighting = false;
+
+            // Initialize with two empty laptop cards
+            updateLaptopDisplay();
+
+            // Event listeners for laptop selection
+            laptopSelectors.forEach((selector, index) => {
+                selector.addEventListener('change', function() {
+                    updateLaptopDisplay();
+                    updateSpecsTable();
+                });
+            });
+
+            // Highlight differences button
+            highlightBtn.addEventListener('click', function() {
+                isHighlighting = !isHighlighting;
+                this.classList.toggle('active', isHighlighting);
+                highlightDifferences();
+            });
+
+            // Add laptop button
+            document.querySelector('.add-laptop-btn').addEventListener('click', function() {
+                alert('This feature would allow adding more laptops to compare in a full implementation.');
+            });
+
+            // Update laptop display based on selections
+            function updateLaptopDisplay() {
+                laptopsDisplay.innerHTML = '';
+                
+                laptopSelectors.forEach((selector, index) => {
+                    const selectedLaptop = selector.value;
+                    
+                    if (selectedLaptop && laptops[selectedLaptop]) {
+                        const laptop = laptops[selectedLaptop];
+                        const laptopCard = document.createElement('div');
+                        laptopCard.className = 'laptop-card';
+                        laptopCard.innerHTML = `
+                            <div class="laptop-image">
+                                <img src="${laptop.image}" alt="${laptop.name}">
+                            </div>
+                            <div class="laptop-info">
+                                <div class="laptop-name">${laptop.name}</div>
+                                <div class="laptop-price">${laptop.price}</div>
+                                <button class="remove-btn" data-index="${index}">Remove</button>
+                            </div>
+                        `;
+                        laptopsDisplay.appendChild(laptopCard);
+                    } else {
+                        const emptyCard = document.createElement('div');
+                        emptyCard.className = 'laptop-card';
+                        emptyCard.innerHTML = `
+                            <div class="laptop-image">
+                                <div style="color: #777; text-align: center;">No Laptop Selected</div>
+                            </div>
+                            <div class="laptop-info">
+                                <div class="laptop-name">Select a laptop</div>
+                                <button class="remove-btn" data-index="${index}">Remove</button>
+                            </div>
+                        `;
+                        laptopsDisplay.appendChild(emptyCard);
+                    }
+                });
+
+                // Add event listeners to remove buttons
+                document.querySelectorAll('.remove-btn').forEach(button => {
+                    button.addEventListener('click', function() {
+                        const index = this.getAttribute('data-index');
+                        laptopSelectors[index].selectedIndex = 0;
+                        updateLaptopDisplay();
+                        updateSpecsTable();
+                    });
+                });
+            }
+
+            // Update specifications table based on selections
+            function updateSpecsTable() {
+                const selectedLaptops = [];
+                
+                laptopSelectors.forEach(selector => {
+                    if (selector.value && laptops[selector.value]) {
+                        selectedLaptops.push(laptops[selector.value]);
+                    }
+                });
+
+                // Update table headers
+                const headerCells = specsTable.querySelectorAll('thead th');
+                for (let i = 1; i < headerCells.length; i++) {
+                    if (selectedLaptops[i-1]) {
+                        headerCells[i].textContent = selectedLaptops[i-1].name;
+                    } else {
+                        headerCells[i].textContent = `Laptop ${i}`;
+                    }
+                }
+
+                // Update table content
+                const rows = specsTable.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    const specName = cells[0].textContent.toLowerCase();
+                    
+                    for (let i = 1; i < cells.length; i++) {
+                        if (selectedLaptops[i-1] && selectedLaptops[i-1].specs[specName]) {
+                            cells[i].textContent = selectedLaptops[i-1].specs[specName];
+                        } else {
+                            cells[i].textContent = '-';
+                        }
+                    }
+                });
+
+                // Re-apply highlighting if active
+                if (isHighlighting) {
+                    highlightDifferences();
+                }
+            }
+
+            // Highlight differences between laptops
+            function highlightDifferences() {
+                const rows = specsTable.querySelectorAll('tbody tr');
+                
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    const values = [];
+                    
+                    // Collect values from all cells (skip the first cell which is the spec name)
+                    for (let i = 1; i < cells.length; i++) {
+                        values.push(cells[i].textContent.trim());
+                    }
+                    
+                    // Check if all values are the same
+                    const allSame = values.every(val => val === values[0]);
+                    
+                    // Apply or remove highlighting
+                    for (let i = 1; i < cells.length; i++) {
+                        if (isHighlighting && !allSame) {
+                            cells[i].classList.add('highlight-diff');
+                        } else {
+                            cells[i].classList.remove('highlight-diff');
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
